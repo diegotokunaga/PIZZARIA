@@ -1,48 +1,97 @@
-import Head from '../../../node_modules/next/head'
-import styles from '../../../styles/Home.module.scss'
-import Image from '../../../node_modules/next/image'
+import { useState, FormEvent, useContext } from 'react'
 
-import logoImg from '../../../public/logoImg.png'
+import Head from 'next/head'
+import Image from 'next/image';
+import styles from '../../../styles/home.module.scss';
 
-import { Input } from '../../components/ui/input/index' 
-import { Button } from '../../components/ui/Button/index'
+import logoImg from '../../../public/logo.svg';
 
-import Link  from '../../../node_modules/next/link'
+import { Input } from '../../components/ui/Input'
+import { Button } from '../../components/ui/Button'
 
+import {AuthContext} from '../../contexts/AuthContext'
+import {toast} from 'react-toastify' 
 
-export default function Signup() {
-    return ( 
+import Link from 'next/link';
+
+export default function SignUp() {
+  const {signUp} = useContext(AuthContext)
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const [loading, setLoading] = useState(false);
+
+  async function handleSignUp(event: FormEvent){
+    event.preventDefault();
+
+    if(name === '' || email === '' || password === ''){
+      toast.warning("PREENCHA TODOS OS CAMPOS")
+      return;
+    }
+
+    setLoading(true);
+
+    let data = {
+      name,
+      email,
+      password
+    }
+
+    await signUp(data)
+
+    setLoading(false);
+
+  }
+
+  return (
     <>
     <Head>
-        <title>Pizzaria - Faça seu Cadastro</title>
+      <title>Faça seu cadastro agora!</title> 
     </Head>
-    <div>
-        <div className={styles.containerCenter}>
-        <Image className={styles.logo}src={logoImg} alt="logo Pizzaria" />
+    <div className={styles.containerCenter}>
+      <Image src={logoImg} alt="Logo Pizzaria" />
 
-        <div className={styles.login}>
+      <div className={styles.login}>
+        <h1>Criando sua conta</h1>
 
-            <h1>Criando sua conta</h1>
-            <form>
-                <Input placeholder='Digite seu nome' type='text'/>
-                <Input placeholder='Digite seu email' type='text'/>
-                <Input placeholder='Digite sua senha' type='password'/>
+        <form onSubmit={handleSignUp}>
+          <Input
+            placeholder="Digite seu nome"
+            type="text"
+            value={name}
+            onChange={ (e) => setName(e.target.value) }
+          />
 
-                <Button
-                    type="submit"
-                    loading={false}
-                    >
-                        Cadastrar
-                
-                </Button>
-            </form>
-            <Link href="/">
-            <a className={styles.text}>Já possui uma conta? Faça seu login</a>
-            </Link>
-        </div>
+          <Input
+            placeholder="Digite seu email"
+            type="text"
+            value={email}
+            onChange={ (e) => setEmail(e.target.value) }
+          />
 
-        </div>
+          <Input
+            placeholder="Sua senha"
+            type="password"
+            value={password}
+            onChange={ (e) => setPassword(e.target.value) }
+          />
+          
+          <Button
+            type="submit"
+            loading={loading}
+          >
+            Cadastrar
+          </Button>
+        </form>
+
+        <Link href="/">
+           <a className={styles.text}>Já possui uma conta? Faça login!</a>
+        </Link>
+
+      </div>
     </div>
     </>
-    )
+  )
 }
