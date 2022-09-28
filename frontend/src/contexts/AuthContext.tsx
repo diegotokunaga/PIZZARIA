@@ -2,7 +2,7 @@ import { createContext, ReactNode, useState, useEffect } from 'react';
 
 import { api } from '../services/apiClient';
 
-import { destroyCookie, setCookie, parseCookies } from 'nookies';
+import { destroyCookie, setCookie, parseCookies } from 'nookies'
 import Router from 'next/router';
 
 import { toast } from 'react-toastify'
@@ -13,7 +13,7 @@ type AuthContextData = {
   isAuthenticated: boolean;
   signIn: (credentials: SignInProps) => Promise<void>;
   signOut: () => void;
-  signUp: (credentials: SignUpProps) => Promise<void>
+  signUp: (credentials: SignUpProps) => Promise<void>;
 }
 
 type UserProps = {
@@ -31,7 +31,7 @@ type SignUpProps = {
   name: string;
   email: string;
   password: string;
-} 
+}
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -53,23 +53,29 @@ export function AuthProvider({ children }: AuthProviderProps){
   const [user, setUser] = useState<UserProps>()
   const isAuthenticated = !!user;
 
-  useEffect(()=>{
-      const { '@nextauth.token' : token } = parseCookies();
+  useEffect(() => {
 
-      if(token){
-        api.get('/perfil').then(response => {
-          const {id, name, email} = response.data;
-          setUser({
-            id,
-            name,
-            email,
-          })
+    // tentar pegar algo no cookie
+    const { '@nextauth.token': token } = parseCookies();
 
+    if(token){
+      api.get('/me').then(response => {
+        const { id, name, email } = response.data;
+
+        setUser({
+          id,
+          name,
+          email
         })
-        .catch(()=>{
-          signOut();
-        })
-      }
+
+      })
+      .catch(() => {
+        //Se deu erro deslogamos o user.
+        signOut();
+      })
+    }
+
+
   }, [])
 
   async function signIn({ email, password }: SignInProps){
@@ -96,37 +102,36 @@ export function AuthProvider({ children }: AuthProviderProps){
       //Passar para proximas requisiçoes o nosso token
       api.defaults.headers['Authorization'] = `Bearer ${token}`
 
-      toast.success("LOGADO COM SUCESSO")
+      toast.success('Logado com sucesso!')
 
       //Redirecionar o user para /dashboard
       Router.push('/dashboard')
 
 
     }catch(err){
-      toast.error("ERRO AO ACESSAR")
+      toast.error("Erro ao acessar!")
       console.log("ERRO AO ACESSAR ", err)
     }
   }
 
-  async function signUp({name, email, password }: SignUpProps ) {
 
+  async function signUp({ name, email, password}: SignUpProps){
     try{
-
+      
       const response = await api.post('/users', {
         name,
         email,
         password
       })
 
-      toast.success("CADASTRADO COM SUCESSO")
+      toast.success("Conta criada com sucesso!")
 
       Router.push('/')
 
-    } catch(err) {
-      toast.error("ERRO AO CADASTRAR")
-      console.log("erro ao cadastrar " , err)
+    }catch(err){
+      toast.error("Erro ao cadastrar!")
+      console.log("erro ao cadastrar ", err)
     }
-    
   }
 
   return(

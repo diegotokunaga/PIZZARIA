@@ -1,41 +1,37 @@
-import { useContext } from 'react'
+import { useContext  } from 'react'
+import styles from './styles.module.scss'
 import Link from 'next/link'
-import styles from './style.module.scss'
 
 import { FiLogOut } from 'react-icons/fi'
 
 import { AuthContext } from '../../contexts/AuthContext'
 
-
-
 export function Header(){
 
-    const {signOut} = useContext(AuthContext)
-    
-    return(
-        <header className={styles.headerConteiner}>
+  const { signOut } = useContext(AuthContext)
 
-            <div className={styles.headerContent}>
-                <Link href='/dashboard'>
-                    <img  src='/logo.svg' width={200} height={70} />
-                </Link>
-                    
+  return(
+    <header className={styles.headerContainer}>
+      <div className={styles.headerContent}>
+        <Link href="/dashboard">
+          <img src="/logo.svg" width={190} height={60} />
+        </Link>
 
-            <nav>
-                <Link href='/category'>
-                    <a>Categoria</a>
-                </Link>
+        <nav className={styles.menuNav}>
+          <Link href="/category">
+            <a>Categoria</a>
+          </Link>
 
-                <Link href='/product'>
-                    <a>Novo Produto</a>
-                </Link>
+          <Link href="/product">
+            <a>Cardapio</a>
+          </Link>   
 
-                <button onClick={signOut}>
-                    <FiLogOut color='#FFF' size={24} />
-                </button>
+          <button onClick={signOut}>
+            <FiLogOut color="#FFF" size={24} />
+          </button>       
+        </nav>
 
-            </nav>
-            </div>
-        </header>
-    )
+      </div>
+    </header>
+  )
 }

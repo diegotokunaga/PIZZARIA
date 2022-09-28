@@ -8,13 +8,13 @@ import logoImg from '../../public/logo.svg';
 
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
+import { toast } from 'react-toastify'
 
 import { AuthContext } from '../contexts/AuthContext'
-import {toast} from 'react-toastify' 
 
 import Link from 'next/link';
 
-import {canSSRGuest} from '../utils/canSSRGuest'
+import { canSSRGuest } from '../utils/canSSRGuest'
 
 export default function Home() {
   const { signIn } = useContext(AuthContext)
@@ -28,7 +28,7 @@ export default function Home() {
     event.preventDefault();
 
     if(email === '' || password === ''){
-      toast.warning("PREENCHA OS DADOS")
+      toast.error("Preencha os campos")
       return;
     }
 
@@ -50,7 +50,7 @@ export default function Home() {
       <title>Pizza Delivery - Faça seu login</title> 
     </Head>
     <div className={styles.containerCenter}>
-      <Image src={logoImg} alt="Logo Sujeito Pizzaria" />
+      <Image src={logoImg} alt="Logo Pizzaria" />
 
       <div className={styles.login}>
         <form onSubmit={handleLogin}>
@@ -87,7 +87,8 @@ export default function Home() {
 }
 
 
-export const getServerSideProps = canSSRGuest(async (ctx) =>{
+export const getServerSideProps = canSSRGuest(async (ctx) => {
+  
   return {
     props: {}
   }
